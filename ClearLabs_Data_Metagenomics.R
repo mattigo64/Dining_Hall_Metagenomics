@@ -8,6 +8,8 @@ install.packages("rJava", configure.args="--disable-jri")
 library(lme4)
 install.packages('gplots')
 library(gplots)
+install.packages("ape", dependencies = T)
+library("ape")
 
 
 #setwd("~/Genomics/Figures.7-7-20")
@@ -20,10 +22,10 @@ BiocManager::install("DESeq2")
 
 
 
-OTU <- read_excel("~/Dropbox/Clear Labs Rutgers University collaboration/Clear Labs Data Extraction - Censored.xlsx", 
+OTU <- read_excel("~/To/My/OTU/File", 
                    sheet = "OTU_Test")
 
-TAX <- read_excel("~/Dropbox/Clear Labs Rutgers University collaboration/Clear Labs Data Extraction - Censored.xlsx", 
+TAX <- read_excel("~/To/My/Tax?File", 
                   sheet = "Tax_Test")
 
 OTU1=as.matrix(OTU)
@@ -32,18 +34,15 @@ rownames(OTU1) <- paste0("OTU", 1:nrow(OTU1))
 TAX1 = as.matrix(TAX)
 rownames(TAX1) <- rownames(OTU1)
 
-library("phyloseq")
 OTU1 = otu_table(OTU1, taxa_are_rows = TRUE)
 TAX1 = tax_table(TAX1)
 
 physeq = phyloseq(OTU1, TAX1)
 
-install.packages("ape", dependencies = T)
-library("ape")
 random_tree = rtree(ntaxa(physeq), rooted=TRUE, tip.label=taxa_names(physeq))
 
 
-Sample <- read_excel("~/Dropbox/Clear Labs Rutgers University collaboration/Clear Labs Data Extraction - Censored.xlsx", 
+Sample <- read_excel("~/To/My/Samples", 
                      sheet = "Samples_Test")
 
 Sample=as.matrix(Sample)
@@ -56,7 +55,7 @@ ps.1 = merge_phyloseq(physeq, sampledata,random_tree)
 ps.species = tax_glom(ps.1, taxrank="Genus", NArm=FALSE)
 
 
-
+######Use To Print Figures
 ####Everything
 jpeg("barplot.jpeg", units="in", width=20, height=20, res=1000)
 plot_bar(ps.species, fill = "Order")+theme(legend.text = element_text(size=10),legend.key.size = unit(0.2,"line"),
@@ -169,33 +168,10 @@ TukeyHSD(aov1)
 
 Anova(lm(rich$Simpson~Sample$Coli.round))
 
-
+###Data for Only Produce
 ############PRODUCE
 ps.species.produce = subset_samples(ps.species, Category=="Produce")
 ps.species.produce = tax_glom(ps.species.produce, taxrank="Genus", NArm=FALSE)
-
-#sample_variables(ps.species.produce1)
-
-
-
-#library(tidyverse)
-#library(forcats)
-
-#plot_bar(ps.species.produce1, fill = "Genus")+theme(legend.text = element_text(size=5),legend.key.size = unit(0.2,"line"),
-                                                  #  axis.text.x = element_text(size=5)
-
-#plot_bar(ps.species.produce1, fill = "Genus") + facet_wrap(~Dining.hall, scales= "free_x", nrow=1)+theme(legend.text = element_text(size=5),legend.key.size = unit(0.2,"line"),
-               
-                                                                                                                                                                                               #    axis.text.x = element_text(size=5))
-#ps.species.produce.2 = subset_samples(ps.1, Category=="Produce")
-#ps.species.produce.2 = tax_glom(ps.species.produce.2, taxrank="Genus", NArm=FALSE)
-
-
-#top20OTU.names = names(sort(taxa_sums(ps.species), TRUE)[1:20])
-#ps.species.produce.2 = prune_taxa(top20OTU.names, ps.species.produce.2)
-#top20OTU=subset_samples(ps.species.produce.2, Category=="Produce")
-
-
 
 top10OTU.names = names(sort(taxa_sums(ps.species), TRUE)[1:10])
 top10OTU = prune_taxa(top10OTU.names, ps.species.produce)
@@ -233,7 +209,7 @@ dev.off()
 
 plot_heatmap(top20OTU.produce, ylab="Genus",taxa.label="Genus",taxa.order="Order")+theme(axis.text.x = element_text(size=12, face='bold'), axis.text.y=element_text(size=30), axis.title.y=element_text(size=24),axis.title.x=element_text(size=24))
 
-
+####Data for Everything Else
 ####################Else
 ps.species.else = subset_samples(ps.1, Category!="Produce")
 #else.table=phyloseq(OTU1, TAX1)
@@ -301,7 +277,7 @@ OTU = as.numeric(OTU)
 hm1 = heatmap.2(OTU)
 hm1
 ############
-#######
+#######Test Code DO NOT DELETE
 
 
 library("phyloseq")
@@ -333,7 +309,7 @@ random_tree = rtree(ntaxa(ps.genus), rooted=TRUE, tip.label=taxa_names(ps.genus)
 plot_bar(ps.genus, fill = "Genus")
 
 
-Sample <- read_excel("~/Dropbox/Clear Labs Rutgers University collaboration/Clear Labs Data Extraction - Censored.xlsx", 
+Sample <- read_excel("~/To/MY/Samples", 
                   sheet = "Samples_Test")
 
 Sample=as.matrix(Sample)
@@ -380,5 +356,28 @@ plot_ordination(ps.species, ordination, color="Ingredient.Amount") + theme(aspec
 dev.off()
 
 
+
+
+####TEST CODE
+#sample_variables(ps.species.produce1)
+
+
+
+#library(tidyverse)
+#library(forcats)
+
+#plot_bar(ps.species.produce1, fill = "Genus")+theme(legend.text = element_text(size=5),legend.key.size = unit(0.2,"line"),
+                                                  #  axis.text.x = element_text(size=5)
+
+#plot_bar(ps.species.produce1, fill = "Genus") + facet_wrap(~Dining.hall, scales= "free_x", nrow=1)+theme(legend.text = element_text(size=5),legend.key.size = unit(0.2,"line"),
+               
+                                                                                                                                                                                               #    axis.text.x = element_text(size=5))
+#ps.species.produce.2 = subset_samples(ps.1, Category=="Produce")
+#ps.species.produce.2 = tax_glom(ps.species.produce.2, taxrank="Genus", NArm=FALSE)
+
+
+#top20OTU.names = names(sort(taxa_sums(ps.species), TRUE)[1:20])
+#ps.species.produce.2 = prune_taxa(top20OTU.names, ps.species.produce.2)
+#top20OTU=subset_samples(ps.species.produce.2, Category=="Produce")
 
 
